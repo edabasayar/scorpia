@@ -45,7 +45,7 @@ export default function RegisterScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  scroll: { paddingHorizontal: 30, paddingBottom: 50 },
+  scroll: { paddingHorizontal: 32, paddingBottom: 50 },
   title: { fontSize: 30, fontWeight: '700', color: colors.textPrimary, marginBottom: 5 },
   subtitle: { fontSize: 17.5, color: colors.textSecondary, marginBottom: 30 },
   terms: { flexDirection: 'row', alignItems: 'center', gap: 12.5, marginBottom: 25 },
