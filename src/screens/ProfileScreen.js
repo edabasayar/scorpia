@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+// Arayüz elemanları, kaydırma alanı, tıklanabilir alanlar, açma/kapama butonu, resimler, açılır pencereler (Modal), veri giriş kutuları ve uyarı mesajları (Alert) dahil edildi.
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Switch, Image, Modal, TextInput, Alert
 } from 'react-native';
+// İçeriği ekran çentiklerinden koruyan güvenli alan bileşeni.
 import { SafeAreaView } from 'react-native-safe-area-context';
+// Ortak tema renk dosyası.
 import { colors } from '../theme/colors';
+// Ortak veri havuzundaki kullanıcı adı bilgisini okumak ve değiştirmek için kullanılan özel fonksiyon.
 import { useUser } from '../context/UserContext';
 
+// Alt menüde (TabBar) kullanılacak olan aktif ve pasif SVG ikon dosyaları içeri aktarıldı.
 import AnasayfaActive from '../assets/icons/anasayfaikonbasili.svg';
 import AnasayfaInactive from '../assets/icons/anasayfaikonsonuk.svg';
 import IstatistikActive from '../assets/icons/istatistikikonbasili.svg';
@@ -18,6 +23,7 @@ import HedefInactive from '../assets/icons/hedefikonsonuk.svg';
 import ProfilActive from '../assets/icons/profilikonbasili.svg';
 import ProfilInactive from '../assets/icons/profilikonsonuk.svg';
 
+// Alt menü butonlarının etiketlerini ve aktif/pasif ikon eşleşmelerini tutan liste yapısı.
 const TABS = [
   { label: 'Profil', active: ProfilActive, inactive: ProfilInactive },
   { label: 'İstatistik', active: IstatistikActive, inactive: IstatistikInactive },
@@ -26,13 +32,15 @@ const TABS = [
   { label: 'Oyun', active: KutuActive, inactive: KutuInactive },
 ];
 
+// --- 1. YARDIMCI BİLEŞEN: MODAL (AÇILIR PENCERE) ---
+// Kullanıcı adı ve şifre değiştirme işlemlerinde ekranın üstünde açılan ortak pencere şablonu.
 function EditModal({ visible, title, onClose, onSave, children }) {
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modal}>
           <Text style={styles.modalTitle}>{title}</Text>
-          {children}
+          {children} {/* Pencerenin içine dışarıdan gelen girdi kutuları yerleşir */}
           <View style={styles.modalButtons}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
               <Text style={styles.cancelText}>İptal</Text>
@@ -47,6 +55,8 @@ function EditModal({ visible, title, onClose, onSave, children }) {
   );
 }
 
+// --- 2. YARDIMCI BİLEŞEN: MENÜ SATIRI ---
+// Ayarlar listesindeki her bir satırı (Kullanıcı adı, Şifre, Bildirimler) oluşturan şablon.
 function MenuItem({ label, value, isSwitch, onToggle, onPress }) {
   return (
     <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.7}>
@@ -59,27 +69,34 @@ function MenuItem({ label, value, isSwitch, onToggle, onPress }) {
   );
 }
 
+// --- ANA EKRAN BİLEŞENİ ---
 export default function ProfileScreen({ navigation }) {
-  const [notifs, setNotifs] = useState(true);
-  const [activeTab, setActiveTab] = useState(0);
-  const { username, setUsername } = useUser();
-  const [tempUsername, setTempUsername] = useState('');
-  const [showUsernameModal, setShowUsernameModal] = useState(false);
+  // --- HAFIZA KUTULARI (STATE YÖNETİMİ) ---
+  const [notifs, setNotifs] = useState(true); // Bildirim açma/kapama durumu
+  const [activeTab, setActiveTab] = useState(0); // Aktif alt menü sekmesinin sırası
+  const { username, setUsername } = useUser(); // Ortak veri havuzundan (Context) çekilen isim bilgileri
+  const [tempUsername, setTempUsername] = useState(''); // Modal içindeki geçici isim yazısı
+  const [showUsernameModal, setShowUsernameModal] = useState(false); // İsim değiştirme penceresinin görünürlüğü
+  
+  // Şifre değiştirme alanlarının hafıza kutuları
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false); // Şifre değiştirme penceresinin görünürlüğü
 
+  // --- KONTROL FONKSİYONLARI ---
+  // Kullanıcı adı kaydetme butonu mantığı
   const handleSaveUsername = () => {
     if (tempUsername.trim().length < 3) {
       Alert.alert('Hata', 'Kullanıcı adı en az 3 karakter olmalı.');
       return;
     }
-    setUsername(tempUsername.trim());
+    setUsername(tempUsername.trim()); // Havuzdaki kalıcı ismi günceller
     setShowUsernameModal(false);
     setTempUsername('');
   };
 
+  // Şifre değiştirme ve doğrulama mantığı
   const handleSavePassword = () => {
     if (newPassword.length < 6) {
       Alert.alert('Hata', 'Yeni şifre en az 6 karakter olmalı.');
@@ -98,7 +115,8 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      {/* Kullanıcı Adı Modal */}
+      
+      {/* KULLANICI ADI DEĞİŞTİRME PENCERESİ */}
       <EditModal
         visible={showUsernameModal}
         title="Kullanıcı Adını Değiştir"
@@ -115,7 +133,7 @@ export default function ProfileScreen({ navigation }) {
         />
       </EditModal>
 
-      {/* Şifre Modal */}
+      {/* ŞIFRE DEĞİŞTİRME PENCERESİ */}
       <EditModal
         visible={showPasswordModal}
         title="Şifre Değiştir"
@@ -148,7 +166,10 @@ export default function ProfileScreen({ navigation }) {
         />
       </EditModal>
 
+      {/* ANA İÇERİK ALANI */}
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        
+        {/* Üst Kısım: Kullanıcı Bilgi Kartı (Avatar, İsim ve Seviye) */}
         <View style={styles.userCard}>
           <View style={styles.avatar}>
             <Image
@@ -163,6 +184,7 @@ export default function ProfileScreen({ navigation }) {
           </View>
         </View>
 
+        {/* Hesap Ayarları Bölümü */}
         <Text style={styles.sectionTitle}>HESAP AYARLARI</Text>
         <View style={styles.menuCard}>
           <MenuItem
@@ -180,16 +202,19 @@ export default function ProfileScreen({ navigation }) {
           <MenuItem label="Bildirimler" isSwitch value={notifs} onToggle={setNotifs} />
         </View>
 
+        {/* Diğer Ayarlar Bölümü */}
         <Text style={styles.sectionTitle}>DİĞER</Text>
         <View style={styles.menuCard}>
           <MenuItem label="Yardım ve Destek" value="›" />
         </View>
 
+        {/* Oturumu Kapatma Linki */}
         <TouchableOpacity style={styles.logout} onPress={() => navigation.navigate('Splash')}>
           <Text style={styles.logoutText}>Oturumu Kapat</Text>
         </TouchableOpacity>
       </ScrollView>
 
+      {/* EN ALTTAKİ SABİT MENÜ (TAB BAR) TASARIMI */}
       <View style={styles.tabBar}>
         {TABS.map((tab, i) => {
           const TabIcon = activeTab === i ? tab.active : tab.inactive;
@@ -206,9 +231,14 @@ export default function ProfileScreen({ navigation }) {
   );
 }
 
+// --- GÖRSEL TASARIM AYARLARI ---
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  scroll: { paddingHorizontal: 25, paddingBottom: 125 },
+  
+  // Belirlenen tasarım standardı doğrultusunda sağ-sol iç boşluğu tam 32px olarak ayarlandı:
+  scroll: { paddingHorizontal: 32, paddingBottom: 125 },
+  
+  // Kullanıcı kartı, resim (avatar) alanı ve yazı yerleşimleri
   userCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.white, borderRadius: 20, padding: 20, marginTop: 20, marginBottom: 30, gap: 17.5 },
   avatar: { width: 65, height: 65, borderRadius: 32.5, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   avatarImg: { width: 52.5, height: 52.5 },
@@ -216,6 +246,8 @@ const styles = StyleSheet.create({
   badge: { backgroundColor: colors.accent, borderRadius: 7.5, paddingHorizontal: 10, paddingVertical: 2.5, alignSelf: 'flex-start' },
   badgeText: { fontSize: 14, color: colors.primary, fontWeight: '600' },
   sectionTitle: { fontSize: 14, fontWeight: '700', color: colors.muted, letterSpacing: 1.5, marginBottom: 10, marginLeft: 5 },
+  
+  // Menü blokları ve satır aralarındaki ince ayraç çizgisi (sep) tasarımı
   menuCard: { backgroundColor: colors.white, borderRadius: 17.5, marginBottom: 25, overflow: 'hidden' },
   menuItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 20 },
   menuLabel: { fontSize: 17.5, color: colors.textPrimary, fontWeight: '500' },
@@ -223,11 +255,15 @@ const styles = StyleSheet.create({
   sep: { height: 1.5, backgroundColor: colors.border, marginHorizontal: 20 },
   logout: { alignItems: 'center', marginTop: 10 },
   logoutText: { color: colors.error, fontSize: 17.5, fontWeight: '600' },
+  
+  // Ekranın en altına sabitlenen menü çubuğu tasarımı (position: 'absolute' ile alta çakılmıştır)
   tabBar: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 92.5, paddingTop: 10, backgroundColor: colors.white, flexDirection: 'row', borderTopWidth: 1, borderTopColor: colors.border, alignItems: 'flex-start' },
   tabItem: { flex: 1, alignItems: 'center', justifyContent: 'flex-start', gap: 4 },
   tabIcon: { width: 26, height: 26 },
   tabLabel: { fontSize: 11, color: colors.muted, fontWeight: '500' },
   tabLabelActive: { color: colors.primary, fontWeight: '700' },
+  
+  // Açılır pencerelerin (Modal) arkasındaki koyu gölgeli katman (overlay) ve pencere kutusu tasarımı
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' },
   modal: { backgroundColor: colors.white, borderRadius: 20, padding: 30, width: '85%' },
   modalTitle: { fontSize: 21.5, fontWeight: '700', color: colors.textPrimary, marginBottom: 20 },
