@@ -16,7 +16,7 @@ import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 
 // Google, Facebook, Apple gibi platformlarla hızlı giriş yapmayı sağlayan özel logolu butonlarımız.
-import { SocialButton } from '../components/SocialButton';
+import SocialButton from '../components/SocialButton';
 
 // Uygulamanın ortak renk paletini tutan merkez dosya.
 import { colors } from '../theme/colors';
