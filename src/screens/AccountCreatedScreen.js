@@ -21,7 +21,7 @@ export default function AccountCreatedScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, paddingHorizontal: 30, alignItems: 'center', justifyContent: 'center', paddingBottom: 75 },
+  container: { flex: 1, paddingHorizontal: 32, alignItems: 'center', justifyContent: 'center', paddingBottom: 75 },
   circle: { width: 175, height: 175, borderRadius: 87.5, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginBottom: 40 },
   check: { fontSize: 75, color: colors.white },
   title: { fontSize: 32.5, fontWeight: '700', color: colors.textPrimary, marginBottom: 12.5 },
